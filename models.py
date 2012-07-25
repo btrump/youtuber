@@ -1,35 +1,59 @@
 from django.db import models
+from cms.models.pluginmodel import CMSPlugin
+from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 import json, httplib, datetime
 
 class Youtuber(models.Model):
-    provider_url = models.CharField(max_length=200)
-    thumbnail_url = models.CharField(max_length=200)
+    video_url = models.URLField(max_length=200)
+    provider_url = models.URLField(max_length=200)
+    thumbnail_url = models.URLField(max_length=200)
     title = models.CharField(max_length=200)
     author_name = models.CharField(max_length=200)
-    author_url = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date_published')
+    author_url = models.URLField(max_length=200)
+    created_on = models.DateTimeField(default=timezone.now())
+    modified_on = models.DateTimeField(default=timezone.now())
+    published_on = models.DateTimeField(null=True)
+    html = models.TextField()
     
     def __unicode__(self):
-        return('%s - %s', self.author_name, self.title)
+        return self.title
 
+    def initialize(self, video_url='https://www.youtube.com/watch?v=827ZSLiUI9o'):
+        """Takes a Youtube video URL and calls refresh_data() to pull data from Youtube."""
+        self.video_url = video_url
+        self.refresh_data()
+        
+    def was_published_recently(self):
+        """Returns True if the publish date is fewer than a day ago."""
+        if type(self.published_on) is datetime.datetime:
+            return (self.published_on >= timezone.now() - datetime.timedelta(days=1)) 
+        else:
+            return False
+    was_published_recently.boolean = True
+    was_published_recently.admin_order_field = 'published_on'
+    was_published_recently.short_description = 'Published recently?'
+    
+    def refresh_data(self):
+        """Updates the information in the Youtuber object with data from Youtube."""
+        yt_domain = 'www.youtube.com'
+        qs = '?format=json&url='
+        qs += self.video_url
+        request = '/oembed' + qs
+        conn = httplib.HTTPConnection(yt_domain)
+        conn.request('GET', request)
+        response = conn.getresponse()
+        json_data = json.loads(response.read())
+        self.provider_url = json_data['provider_url']
+        self.thumbnail_url = json_data['thumbnail_url']
+        self.title = json_data['title']
+        self.author_name = json_data['author_name']
+        self.author_url = json_data['author_url']
+        self.html = json_data['html']
+        
+class YoutuberPlugin(CMSPlugin):
+    # poll = models.ForeignKey(Poll, related_name='plugins')
+    video = models.ForeignKey(Youtuber, related_name='plugins')
 
-"""
-<oembed>
-<provider_url>http://www.youtube.com/</provider_url>
-<thumbnail_url>http://i2.ytimg.com/vi/i3Jv9fNPjgk/hqdefault.jpg</thumbnail_url>
-<title>AZEALIA BANKS - 212 FT. LAZY JAY</title>
-<html>
-<iframe width="480" height="270" src="http://www.youtube.com/embed/i3Jv9fNPjgk?fs=1&feature=oembed" frameborder="0" allowfullscreen></iframe>
-</html>
-<author_name>AzealiaBanks</author_name>
-<height>270</height>
-<thumbnail_width>480</thumbnail_width>
-<width>480</width>
-<version>1.0</version>
-<author_url>http://www.youtube.com/user/AzealiaBanks</author_url>
-<provider_name>YouTube</provider_name>
-<type>video</type>
-<thumbnail_height>360</thumbnail_height>
-</oembed>
-"""
+    def __unicode__(self):
+      return self.video.title

@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 class YoutuberPlugin(CMSPluginBase):
     model = CMSPlugin
     name = _('Youtuber Plugin')
-    render_template = 'polls/plugin.html'
+    render_template = 'youtuber/plugin.html'
     
     def render(self, context, instance, placeholder):
         context['instance'] = instance
