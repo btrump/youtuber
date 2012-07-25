@@ -7,13 +7,11 @@ class YoutuberAdmin(admin.ModelAdmin):
                  (None, {'fields': ['question']}),
                  ('Date Information', {'fields': ['pub_date']}),
                  ]
-    inlines = [ChoiceInline]
-    list_display = ('question', 'pub_date', 'was_published_recently')
-    list_filter = ['pub_date']
-    search_fields = ['question']
-    date_hierarchy = 'pub_date'
     """
     exclude = ('provider_url','author_url','created_on','modified_on','author_name')
     list_display = ('title', 'created_on', 'published_on', 'was_published_recently')
+    list_filter = ['published_on']
+    date_hierarchy = 'published_on'
     search_fields = ['title']
+    
 admin.site.register(Youtuber, YoutuberAdmin)

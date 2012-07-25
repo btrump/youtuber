@@ -1,10 +1,10 @@
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
-from cms.models.pluginmodel import CMSPlugin
-from django.utils.translation import ugettext_lazy as _
+from youtuber.models import YoutuberPlugin
+from django.utils.translation import ugettext as _
 
 class YoutuberPlugin(CMSPluginBase):
-    model = CMSPlugin
+    model = YoutuberPlugin
     name = _('Youtuber Plugin')
     render_template = 'youtuber/plugin.html'
     

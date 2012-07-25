@@ -9,12 +9,12 @@ class Youtuber(models.Model):
     provider_url = models.URLField(max_length=200)
     thumbnail_url = models.URLField(max_length=200)
     title = models.CharField(max_length=200)
-    author_name = models.CharField(max_length=200)
+    author_name = models.CharField(max_length=100)
     author_url = models.URLField(max_length=200)
+    html = models.TextField()
     created_on = models.DateTimeField(default=timezone.now())
     modified_on = models.DateTimeField(default=timezone.now())
     published_on = models.DateTimeField(null=True)
-    html = models.TextField()
     
     def __unicode__(self):
         return self.title
@@ -52,8 +52,7 @@ class Youtuber(models.Model):
         self.html = json_data['html']
         
 class YoutuberPlugin(CMSPlugin):
-    # poll = models.ForeignKey(Poll, related_name='plugins')
-    video = models.ForeignKey(Youtuber, related_name='plugins')
+    video = models.ForeignKey('youtuber.Youtuber', related_name='plugins')
 
     def __unicode__(self):
       return self.video.title
