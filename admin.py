@@ -2,13 +2,11 @@ from youtuber.models import Youtuber
 from django.contrib import admin
 
 class YoutuberAdmin(admin.ModelAdmin):
-    """
     fieldsets = [
-                 (None, {'fields': ['question']}),
-                 ('Date Information', {'fields': ['pub_date']}),
+                 (None, {'fields': ['video_url', 'title', 'thumbnail_url', 'published_on']}),
+                 (u"""Advanced Data (don't change unless you know what you're doing!)""", {'fields': ['provider_url', 'author_name', 'author_url', 'video_code'], 'classes':['collapse']}),
+                 # ('Date Information', {'fields': ['published_on', 'modified_on', 'created_on'], 'classes':['collapse']}),
                  ]
-    """
-    exclude = ('provider_url','author_url','created_on','modified_on','author_name')
     list_display = ('title', 'created_on', 'published_on', 'was_published_recently')
     list_filter = ['published_on']
     date_hierarchy = 'published_on'

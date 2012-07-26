@@ -1,0 +1,13 @@
+{% extends 'interior.html' %}
+{% load cms_tags %}
+
+{% block base_content %}
+<h1>Latest Videos</h1>
+<ul>
+	{% for video in videos %}
+	<li>
+		<a href="/videos/{{ video.id }}">{{ video }}</a>
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}

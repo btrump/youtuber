@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load cms_tags %}
+{% block base_content %}
+<h1>{{ video.title }}</h1>
+{% if error_message %}
+<div class="message error">
+	{{ error_message }}
+</div>
+{% endif %}
+{{ video.html|safe }}
+{% endblock %}
