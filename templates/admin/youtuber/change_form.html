@@ -1,7 +1,6 @@
 {% extends "admin/change_form.html" %}
 {% block extrahead %}
-<script type="text/javascript" src="/static/admin/js/jquery.min.js"></script>
-<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+{{ block.super }}
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.7.2.min.js"></script>
 {% endblock %}
 {% block coltype %}colMS{% endblock %}

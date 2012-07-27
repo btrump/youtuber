@@ -13,9 +13,10 @@ class Youtuber(models.Model):
     author_name = models.CharField(max_length=100)
     author_url = models.URLField(max_length=200)
     video_code = models.CharField(max_length=50)
-    created_on = models.DateTimeField(default=timezone.now())
-    modified_on = models.DateTimeField(default=timezone.now())
-    published_on = models.DateTimeField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
+    publish_start = models.DateTimeField(null=True, blank=True)
+    publish_end = models.DateTimeField(null=True, blank=True)
     
     def __unicode__(self):
         return self.title
@@ -26,17 +27,28 @@ class Youtuber(models.Model):
         """
         self.video_url = video_url
         return self.refresh_data()
+    
+    def is_active(self):
+        """
+        Returns True if the current time is between publish_start and publish_end.
+        """
+        if type(self.publish_start) is datetime.datetime and type(self.publish_end) is datetime.datetime:
+            return self.publish_start <= timezone.now() and self.publish_end >= timezone.now()
+        else:
+            return False
+    is_active.boolean = True
+    is_active.short_description = 'Active?'
         
     def was_published_recently(self):
         """
 		Returns True if the publish date is fewer than a day ago.
         """
-        if type(self.published_on) is datetime.datetime:
-            return (self.published_on >= timezone.now() - datetime.timedelta(days=1)) 
+        if type(self.publish_start) is datetime.datetime:
+            return (self.publish_start >= timezone.now() - datetime.timedelta(days=1)) 
         else:
             return False
     was_published_recently.boolean = True
-    was_published_recently.admin_order_field = 'published_on'
+    was_published_recently.admin_order_field = 'publish_start'
     was_published_recently.short_description = 'Published recently?'
     
     def build_html_embed(self, width=420, height=263):
@@ -77,7 +89,7 @@ class Youtuber(models.Model):
         return self
         
 class YoutuberPlugin(CMSPlugin):
-    video = models.ForeignKey('youtuber.Youtuber', related_name='plugins')
-
+    video = models.ForeignKey(Youtuber, related_name='plugins')
+    
     def __unicode__(self):
       return self.video.title
