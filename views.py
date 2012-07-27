@@ -6,8 +6,14 @@ from youtuber.models import Youtuber
 import json
 
 def index(request):
-    videos = Youtuber.objects.all().order_by('-created_on')[:5]
-    context = RequestContext(request, {'videos': videos})
+    NUM_LIST_ITEMS = 5
+    videos = Youtuber.objects.all().order_by('-publish_start')[:NUM_LIST_ITEMS]
+    data = {
+            'videos':       videos[1:5],
+            'latest_video': videos[0],
+            'embed_html':   videos[0].build_html_embed(580, 320)
+            }
+    context = RequestContext(request, data)
     return render_to_response('youtuber/index.html', context)
 
 def detail(request, youtuber_id):

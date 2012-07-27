@@ -1,7 +1,6 @@
-{% extends 'interior.html' %}
-{% load cms_tags %}
+{{ embed_html|safe }}
+{{ latest_video }}
 
-{% block base_content %}
 <h1>Latest Videos</h1>
 <ul>
 	{% for video in videos %}
