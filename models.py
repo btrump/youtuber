@@ -66,7 +66,7 @@ class Youtuber(models.Model):
         # Parse the supplied video_url string to:
         # 1.  Strip any get variables after video ('v') from query string
         # 2.  Get the video code
-        match = re.search('(.+\?v=)(\w+).*', self.video_url)
+        match = re.search('(.+\?v=)([\w+\-]+)', self.video_url)
         self.video_url = match.group(1) + match.group(2)
         self.video_code = match.group(2)
         
