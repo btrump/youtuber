@@ -17,7 +17,10 @@ class YoutuberPlugin(CMSPluginBase):
         """
         context['instance'] = instance
         active_videos = Youtuber.objects.filter(publish_start__lte=datetime.datetime.now()).filter(publish_end__gte=datetime.datetime.now())
-        context['video'] = choice(active_videos)
+        if len(active_videos) > 0:
+            context['video'] = choice(active_videos)
+        else:
+            context['video'] = None
         return context
         
 plugin_pool.register_plugin(YoutuberPlugin)
