@@ -1,4 +1,5 @@
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from youtuber.models import Youtuber
@@ -32,5 +33,4 @@ def refresh_data(request):
                     'author_url':       data.author_url,
                     'video_code':       data.video_code,
                 }
-
     return HttpResponse(json.dumps(json_data), mimetype='application/json')
